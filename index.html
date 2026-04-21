@@ -1050,27 +1050,98 @@ p:last-child {
   max-width: 540px;
 }
 
-.contact-link {
+.contact-form {
+  margin-top: 48px;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-field label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245, 241, 232, 0.5);
+}
+
+.contact-field input,
+.contact-field textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 0.5px solid rgba(245, 241, 232, 0.25);
+  color: var(--washi);
+  font-family: var(--font-jp);
+  font-size: 15px;
+  padding: 10px 0;
+  outline: none;
+  transition: border-color 0.3s ease;
+  width: 100%;
+  resize: none;
+}
+
+.contact-field input::placeholder,
+.contact-field textarea::placeholder {
+  color: rgba(245, 241, 232, 0.2);
+}
+
+.contact-field input:focus,
+.contact-field textarea:focus {
+  border-bottom-color: var(--shu);
+}
+
+.contact-submit {
   display: inline-flex;
   align-items: center;
   gap: 14px;
-  margin-top: 40px;
+  margin-top: 16px;
   font-family: var(--font-display);
   font-size: 18px;
   letter-spacing: 0.08em;
   color: var(--washi);
-  text-decoration: none;
-  padding-bottom: 6px;
+  background: none;
+  border: none;
   border-bottom: 1.5px solid var(--shu);
+  padding-bottom: 6px;
+  cursor: pointer;
   transition: gap 0.3s ease;
 }
 
-.contact-link:hover {
+.contact-submit:hover {
   gap: 20px;
 }
 
-.contact-link .arrow {
+.contact-submit .arrow {
   color: var(--shu);
+}
+
+.contact-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.contact-message {
+  margin-top: 24px;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  display: none;
+}
+
+.contact-message.success {
+  color: rgba(245, 241, 232, 0.75);
+  display: block;
+}
+
+.contact-message.error {
+  color: #e07060;
+  display: block;
 }
 
 /* ========== FOOTER ========== */
@@ -1402,10 +1473,25 @@ footer .container {
     <p>
       相談は無料です。現場を一度、見せてください。解くべき課題があるかどうか、私たち自身が確かめます。
     </p>
-    <a href="mailto:contact@architecgrain.com" class="contact-link">
-      <span>contact@architecgrain.com</span>
-      <span class="arrow">→</span>
-    </a>
+    <form class="contact-form" id="contactForm">
+      <div class="contact-field">
+        <label for="cf-name">お名前</label>
+        <input type="text" id="cf-name" name="name" placeholder="山田 太郎" required>
+      </div>
+      <div class="contact-field">
+        <label for="cf-company">会社名</label>
+        <input type="text" id="cf-company" name="company" placeholder="株式会社〇〇（任意）">
+      </div>
+      <div class="contact-field">
+        <label for="cf-message">ご相談内容</label>
+        <textarea id="cf-message" name="message" rows="5" placeholder="現場の状況や、漠然とした課題感でも構いません。" required></textarea>
+      </div>
+      <button type="submit" class="contact-submit" id="contactSubmit">
+        <span>送信する</span>
+        <span class="arrow">→</span>
+      </button>
+      <p class="contact-message" id="contactResult"></p>
+    </form>
   </div>
 </section>
 
@@ -1429,6 +1515,51 @@ window.addEventListener('scroll', () => {
     nav.classList.remove('scrolled');
   }
 });
+
+// Contact form — GAS endpoint (メールアドレスはGAS側で管理、ここには非公開)
+const FORM_ENDPOINT = 'YOUR_GAS_WEBAPP_URL'; // ← デプロイ後にURLを貼り付ける
+
+const contactForm = document.getElementById('contactForm');
+const contactSubmit = document.getElementById('contactSubmit');
+const contactResult = document.getElementById('contactResult');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    contactSubmit.disabled = true;
+    contactSubmit.querySelector('span').textContent = '送信中…';
+    contactResult.className = 'contact-message';
+    contactResult.textContent = '';
+
+    const data = {
+      name: contactForm.cf_name.value,
+      company: contactForm.cf_company.value,
+      message: contactForm.cf_message.value,
+    };
+
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      if (json.status === 'ok') {
+        contactResult.textContent = 'お問い合わせを受け付けました。数日以内にご連絡いたします。';
+        contactResult.className = 'contact-message success';
+        contactForm.reset();
+      } else {
+        throw new Error(json.message || 'error');
+      }
+    } catch {
+      contactResult.textContent = '送信に失敗しました。時間をおいて再度お試しください。';
+      contactResult.className = 'contact-message error';
+    } finally {
+      contactSubmit.disabled = false;
+      contactSubmit.querySelector('span').textContent = '送信する';
+    }
+  });
+}
 
 // Intersection Observer for reveal animations
 const observerOptions = {
