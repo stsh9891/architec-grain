@@ -8,13 +8,8 @@
 <title>Architec Grain｜言葉にならない課題を、形にする。</title>
 
 <!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="assets/logo/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="assets/logo/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/logo/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="48x48" href="assets/logo/favicon-48x48.png">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/logo/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="assets/logo/android-chrome-192x192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="assets/logo/android-chrome-512x512.png">
+<link rel="icon" type="image/png" href="assets/logo/architec-grain-logo-circle.png">
+<link rel="apple-touch-icon" href="assets/logo/architec-grain-logo-circle.png">
 <meta name="title" content="Architec Grain｜言葉にならない課題を、形にする。">
 <meta name="description" content="Architec Grain合同会社は、アナログ業務を中心とする中小企業（SMB）のために、言葉にならない現場の課題を独自のアプリケーションとして設計・実装する、組織と仕組みの設計事務所です。経営者の直感と現場の暗黙知を、持続する仕組みへ翻訳します。">
 <meta name="keywords" content="組織づくり,仕組みづくり,中小企業DX,業務アプリ開発,SMB向けコンサル,Architec Grain,長谷川郷,米子,鳥取">
@@ -161,7 +156,7 @@ section[id] {
 
 @media (max-width: 600px) {
   section[id] {
-    scroll-margin-top: 80px;
+    scroll-margin-top: 100px;
   }
 }
 
@@ -202,14 +197,21 @@ body::before {
 }
 
 @media (max-width: 600px) {
+  nav {
+    padding: 10px 0 8px;
+  }
   nav .container {
     padding: 0 18px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
 
 @media (max-width: 380px) {
   nav .container {
     padding: 0 12px;
+    gap: 6px;
   }
 }
 
@@ -292,6 +294,9 @@ nav .container {
   display: flex;
   gap: 36px;
   list-style: none;
+  padding-left: 32px;
+  border-left: 0.5px solid var(--line-strong);
+  margin-left: 8px;
 }
 
 .nav-links a {
@@ -338,11 +343,14 @@ nav .container {
 
 @media (max-width: 600px) {
   .nav-links {
-    gap: 14px;
+    gap: 18px;
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
   }
   .nav-links a {
     font-size: 10px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
   }
 }
 
